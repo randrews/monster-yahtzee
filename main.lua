@@ -85,8 +85,7 @@ function love.update(dt)
       current_animation:update(dt)
       if current_animation.finished then
          current_animation = nil
-         game.state = 'waiting'
-         print('done')
+         game:change_state('waiting')
       end
    end
 end

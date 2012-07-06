@@ -18,6 +18,17 @@ function new()
    return tbl
 end
 
+function methods:change_state(new_state)
+   if self.state == 'waiting' and new_state == 'revealing' then
+      self.state = 'revealing'
+   elseif self.state == 'revealing' and new_state == 'waiting' then
+      self.state = 'waiting'
+      self:find_stems()
+   else
+      error(string.format('Cannot switch to state %s from %s', new_state, self.state))
+   end
+end
+
 function methods:init()
    self.maze:maze()
    self.visible:clear(false)
@@ -31,17 +42,32 @@ function methods:init()
    else
       self.visible:at(start, true)
 
-      for _, p in ipairs(self.maze:connected(start)) do
-         self.stems:at(p, true)
+      -- for _, p in ipairs(self.maze:connected(start)) do
+      --    self.stems:at(p, true)
+      -- end
+      self:find_stems()
+   end
+end
+
+function methods:find_stems()
+   self.stems:clear(false)
+   local seen = function(_,p) return self.visible:at(p) end
+
+   for p in self.maze:each() do
+      if not self.visible:at(p) then
+         -- Find exits to visible tiles
+         local exits = self.maze:connected(p, seen)
+         if #exits > 0 then -- this is hidden but connected to a visible, so, stem!
+            self.stems:at(p, true)
+         end
       end
    end
 end
 
 function methods:reveal(pt)
    assert(self.stems:at(pt), "This isn't a stem")
-   assert(self.state == 'waiting', "Not in a valid state to reveal")
 
-   self.state = 'revealing'
+   self:change_state('revealing')
    self.stems:at(pt, false)
 
    local corridor = {pt}
