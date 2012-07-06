@@ -182,13 +182,22 @@ function methods:connect(pt1, pt2)
    end
 end
 
-function methods:connected(pt)
+function methods:connected(pt, fn)
    local c = {}
    local s = self:at(pt)
    if s:match('n') then table.insert(c, pt+point(0,-1)) end
    if s:match('e') then table.insert(c, pt+point(1, 0)) end
    if s:match('s') then table.insert(c, pt+point(0, 1)) end
    if s:match('w') then table.insert(c, pt+point(-1,0)) end
+
+   if fn then
+      local m = {}
+      for _, p in ipairs(c) do
+         if fn(self,p) then table.insert(m, p) end
+      end
+      c = m
+   end
+
    return c
 end
 
