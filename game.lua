@@ -111,12 +111,15 @@ end
 
 function methods:find_stems()
    self.stems:clear(false)
-   local seen = function(_,p) return self.visible:at(p) end
+   local seen_and_clear =
+      function(_,p)
+         return self.visible:at(p) and not self.encounters:at(p)
+      end
 
    for p in self.maze:each() do
       if not self.visible:at(p) then
          -- Find exits to visible tiles
-         local exits = self.maze:connected(p, seen)
+         local exits = self.maze:connected(p, seen_and_clear)
          if #exits > 0 then -- this is hidden but connected to a visible, so, stem!
             self.stems:at(p, true)
          end
@@ -133,7 +136,13 @@ function methods:reveal(pt)
    local corridor = {pt}
    self.visible:at(pt, true)
 
-   while #(self.maze:at(pt)) == 2 do
+
+   -- Return true iff pt should stop a reveal chain
+   local function stopper(pt)
+      return #(self.maze:at(pt)) ~= 2 or self.encounters:at(pt)
+   end
+
+   while not stopper(pt) do
       local n = self:next(pt)
       self.visible:at(n, true)
       table.insert(corridor, n)
