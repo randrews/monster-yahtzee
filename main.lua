@@ -11,6 +11,7 @@ local game = nil
 local current_animation = nil
 
 function love.load()
+   math.randomseed(os.time())
    local tiles = love.graphics.newImage('tileset.png')
 
    local nq = love.graphics.newQuad
@@ -37,6 +38,8 @@ function love.load()
    quads[''] = nq(w*3, h*3, w, h, sw, sh)
 
    quads.button = nq(w*4, 0, w, h, sw, sh)
+   quads.chest = nq(0, h*4, w, h, sw, sh)
+   quads.orc = nq(w, h*4, w, h, sw, sh)
 
    game = Game.new()
    mapSprites = love.graphics.newSpriteBatch(tiles)
@@ -65,6 +68,12 @@ function drawMap(game, sb)
    for pt in game.stems:each() do
       if game.stems:at(pt) then
          sb:addq(quads.button, pt.x*48, pt.y*48)
+      end
+   end
+
+   for pt in game.encounters:each() do
+      if game.encounters:at(pt) and game.visible:at(pt) then
+         sb:addq(quads.orc, pt.x*48, pt.y*48)
       end
    end
 end

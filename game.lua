@@ -9,6 +9,7 @@ function new()
       maze = maze.new(),
       visible = maze.new(),
       stems = maze.new(),
+      encounters = maze.new(),
 
       state = 'waiting'
    }
@@ -33,20 +34,61 @@ function methods:init()
    self.maze:maze()
    self.visible:clear(false)
    self.stems:clear(false)
+   self:create_encounters()
 
+   -- Nice to have a couple choices at the start.
    local start = self.maze:random(function(m, p)
-                                     return #(m:at(p)) > 2
+                                     return #(m:at(p)) > 2 and not self.encounters:at(p)
                                   end)
 
-   if not start then self:init()
+   if not start then self:init() -- Vanishingly unlikely, but there can be zero branches.
    else
       self.visible:at(start, true)
-
-      -- for _, p in ipairs(self.maze:connected(start)) do
-      --    self.stems:at(p, true)
-      -- end
       self:find_stems()
    end
+end
+
+function methods:create_encounters()
+   self.encounters:clear(false)
+
+   local enc_count, goal = 0, 15 -- How many encs we've placed; how many we want
+
+   -- Selectors for cell types
+   local room = function(m, p) return #(m:at(p)) == 1 end
+   local branch = function(m, p) return #(m:at(p)) > 2 end
+   local hall = function(m, p) return #(m:at(p)) == 2 end
+
+   for _, p in ipairs(self.maze:find(room)) do
+      self.encounters:at(p, true)
+      enc_count = enc_count + 1
+   end
+
+   if enc_count >= goal then return end
+   -- Otherwise, let's do some intersections
+
+   local branches = self.maze:find(branch)
+
+   -- Drop a random branch because we need to guarantee a valid starting place.
+   if #branches > 0 then table.remove(branches, math.random(#branches)) end
+
+   while #branches > 0 and enc_count < goal do
+      local p = table.remove(branches, math.random(#branches))
+      self.encounters:at(p, true)
+      enc_count = enc_count + 1
+   end
+
+   if enc_count >= goal then return end
+   -- Geez, not enouch branches either? Let's start doing random cells then
+
+   local halls = self.maze:find(hall)
+
+   while #halls > 0 and enc_count < goal do
+      local p = table.remove(halls, math.random(#halls))
+      self.encounters:at(p, true)
+      enc_count = enc_count + 1
+   end
+
+   -- Good for now
 end
 
 function methods:find_stems()
