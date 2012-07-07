@@ -172,8 +172,12 @@ function methods:encounter(pt)
    assert(self.encounters:at(pt), "This isn't an encounter")
    self:change_state('encountering')
 
-   -- Actual encounter later
-   self.encounters:at(pt, false)
-
-   self:change_state('waiting')
+   if self.encounters:at(pt) == 'chest' then
+      -- Return a message that we can pop up in a dialog
+      return "You found a chest!\nIt's full of old nerf balls."
+   else
+      -- Actual encounter later
+      self.encounters:at(pt, false)
+      self:change_state('waiting')
+   end
 end

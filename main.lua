@@ -1,11 +1,13 @@
 local Game = require 'game'
 local point = require 'point'
 local reveal = require 'reveal'
+local dialog = require 'dialog'
 
 assert(love, "Run this inside Love")
 
 local quads = {}
 local mapSprites = nil
+local dialogFont = nil
 local game = nil
 
 local current_animation = nil
@@ -43,6 +45,7 @@ function love.load()
 
    game = Game.new()
    mapSprites = love.graphics.newSpriteBatch(tiles)
+   dialogFont = love.graphics.newFont(24)
 end
 
 function love.draw()
@@ -89,7 +92,14 @@ function love.mousepressed(x, y)
       current_animation = reveal.new(game, path)
    elseif game.state == 'waiting' and game.encounters:at(pt) then
       -- They clicked on an encounter, give 'em the business:
-      game:encounter(pt)
+      local message = game:encounter(pt)
+      if message then
+         current_animation = dialog.new(game, message,
+                                        point(pt.x*48+24, pt.y*48+24),
+                                        dialogFont)
+      end
+   elseif game.state == 'encountering' and current_animation.state == 'waiting' then
+      current_animation.state = 'closing'
    end
 end
 
