@@ -73,7 +73,8 @@ function drawMap(game, sb)
 
    for pt in game.encounters:each() do
       if game.encounters:at(pt) and game.visible:at(pt) then
-         sb:addq(quads.orc, pt.x*48, pt.y*48)
+         local q = quads[game.encounters:at(pt)] or quads.chest
+         sb:addq(q, pt.x*48, pt.y*48)
       end
    end
 end

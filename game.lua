@@ -50,6 +50,24 @@ end
 
 function methods:create_encounters()
    self.encounters:clear(false)
+   local enc = self:place_encounters()
+
+   -- Actually make them into chests / monsters
+   for pt in enc:each() do
+      if enc:at(pt) then
+         if math.random(2) == 1 then
+            self.encounters:at(pt, 'orc')
+         else
+            self.encounters:at(pt, 'chest')
+         end
+
+      end
+   end
+end
+
+function methods:place_encounters()
+   local encounters = maze.new()
+   encounters:clear(false)
 
    local enc_count, goal = 0, 15 -- How many encs we've placed; how many we want
 
@@ -59,11 +77,11 @@ function methods:create_encounters()
    local hall = function(m, p) return #(m:at(p)) == 2 end
 
    for _, p in ipairs(self.maze:find(room)) do
-      self.encounters:at(p, true)
+      encounters:at(p, true)
       enc_count = enc_count + 1
    end
 
-   if enc_count >= goal then return end
+   if enc_count >= goal then return encounters end
    -- Otherwise, let's do some intersections
 
    local branches = self.maze:find(branch)
@@ -73,22 +91,22 @@ function methods:create_encounters()
 
    while #branches > 0 and enc_count < goal do
       local p = table.remove(branches, math.random(#branches))
-      self.encounters:at(p, true)
+      encounters:at(p, true)
       enc_count = enc_count + 1
    end
 
-   if enc_count >= goal then return end
+   if enc_count >= goal then return encounters end
    -- Geez, not enouch branches either? Let's start doing random cells then
 
    local halls = self.maze:find(hall)
 
    while #halls > 0 and enc_count < goal do
       local p = table.remove(halls, math.random(#halls))
-      self.encounters:at(p, true)
+      encounters:at(p, true)
       enc_count = enc_count + 1
    end
 
-   -- Good for now
+   return encounters
 end
 
 function methods:find_stems()
