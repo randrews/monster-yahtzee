@@ -4,8 +4,10 @@ local maze = require('maze')
 
 local methods = {}
 
-function new()
-   local w, h = 16, 12
+function new(w, h)
+   w = w or 10
+   h = h or 10
+
    local tbl = {
       maze = maze.new(w,h),
       visible = maze.new(w,h),

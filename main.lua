@@ -1,3 +1,5 @@
+TILE = 64 -- Size of a tile in px
+
 local Game = require 'game'
 local point = require 'point'
 local reveal = require 'reveal'
@@ -17,7 +19,7 @@ function love.load()
    local tiles = love.graphics.newImage('tileset.png')
 
    local nq = love.graphics.newQuad
-   local w, h, sw, sh = 48, 48, 48*5, 48*5
+   local w, h, sw, sh = TILE, TILE, TILE*5, TILE*5
 
    quads.n = nq(0, 0, w, h, sw, sh)
    quads.e = nq(w, 0, w, h, sw, sh)
@@ -43,7 +45,9 @@ function love.load()
    quads.chest = nq(0, h*4, w, h, sw, sh)
    quads.orc = nq(w, h*4, w, h, sw, sh)
 
-   game = Game.new()
+   game = Game.new(math.floor(love.graphics.getWidth()/TILE),
+                   math.floor(love.graphics.getHeight()/TILE))
+
    mapSprites = love.graphics.newSpriteBatch(tiles)
    dialogFont = love.graphics.newFont(24)
 end
@@ -64,27 +68,27 @@ function drawMap(game, sb)
    for pt in map:each() do
       local q = quads[map:at(pt)]
       if q and vis:at(pt) then
-         sb:addq(q, pt.x*48, pt.y*48)
+         sb:addq(q, pt.x*TILE, pt.y*TILE)
       end
    end
 
    for pt in game.stems:each() do
       if game.stems:at(pt) then
-         sb:addq(quads.button, pt.x*48, pt.y*48)
+         sb:addq(quads.button, pt.x*TILE, pt.y*TILE)
       end
    end
 
    for pt in game.encounters:each() do
       if game.encounters:at(pt) and game.visible:at(pt) then
          local q = quads[game.encounters:at(pt)] or quads.chest
-         sb:addq(q, pt.x*48, pt.y*48)
+         sb:addq(q, pt.x*TILE, pt.y*TILE)
       end
    end
 end
 
 function love.mousepressed(x, y)
-   x = math.floor(x/48)
-   y = math.floor(y/48)
+   x = math.floor(x/TILE)
+   y = math.floor(y/TILE)
    local pt = point(x, y)
    if game.state == 'waiting' and game.stems:at(pt) then
       -- They clicked on a stem, give 'em some corridor:
@@ -95,7 +99,7 @@ function love.mousepressed(x, y)
       local message = game:encounter(pt)
       if message then
          current_animation = dialog.new(game, message,
-                                        point(pt.x*48+24, pt.y*48+24),
+                                        point(pt.x*TILE+TILE/2, pt.y*TILE+TILE/2),
                                         dialogFont)
       end
    elseif game.state == 'encountering' and current_animation.state == 'waiting' then

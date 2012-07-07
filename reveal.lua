@@ -5,8 +5,9 @@ local Game = require('game')
 
 local methods = {}
 
-ANIM = 0.25 -- 1/4 sec per animation
-INTERVAL = 0.1 -- 1/10 sec between starting each tile
+local ANIM = 0.25 -- 1/4 sec per animation
+local INTERVAL = 0.1 -- 1/10 sec between starting each tile
+local TILE = TILE or 48 -- Pull the tile size from global, or default to 48
 
 function new(game, tiles)
    local tbl = {
@@ -58,9 +59,9 @@ end
 function methods:makeCovers()
    for _, t in ipairs(self.tiles) do
       table.insert(self.covers, {
-                      x = t.x*48,
-                      y = t.y*48,
-                      w = 48, h = 48,
+                      x = t.x*TILE,
+                      y = t.y*TILE,
+                      w = TILE, h = TILE,
                       started = false,
                       finished = false,
                       time = 0
