@@ -4,10 +4,10 @@ local point = require('point')
 
 local methods = {}
 
-function new(size)
+function new(w, h)
    local tbl = {
-      height = size or 10,
-      width = size or 10,
+      width = w or 10,
+      height = h or w or 10,
    }
 
    setmetatable(tbl, {__index=methods, __tostring=__tostring})

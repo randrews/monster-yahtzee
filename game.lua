@@ -5,11 +5,12 @@ local maze = require('maze')
 local methods = {}
 
 function new()
+   local w, h = 16, 12
    local tbl = {
-      maze = maze.new(),
-      visible = maze.new(),
-      stems = maze.new(),
-      encounters = maze.new(),
+      maze = maze.new(w,h),
+      visible = maze.new(w,h),
+      stems = maze.new(w,h),
+      encounters = maze.new(w,h),
 
       state = 'waiting'
    }
@@ -71,7 +72,7 @@ function methods:create_encounters()
 end
 
 function methods:place_encounters()
-   local encounters = maze.new()
+   local encounters = maze.new(self.encounters.width, self.encounters.height)
    encounters:clear(false)
 
    local enc_count, goal = 0, 15 -- How many encs we've placed; how many we want
