@@ -75,7 +75,9 @@ function methods:place_encounters()
    local encounters = maze.new(self.encounters.width, self.encounters.height)
    encounters:clear(false)
 
-   local enc_count, goal = 0, 15 -- How many encs we've placed; how many we want
+   local enc_count = 0 -- How many encs we've placed
+   -- how many we want:
+   local goal = math.floor(self.maze.width * self.maze.height / 5)
 
    -- Selectors for cell types
    local room = function(m, p) return #(m:at(p)) == 1 end
