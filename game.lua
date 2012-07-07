@@ -25,6 +25,11 @@ function methods:change_state(new_state)
    elseif self.state == 'revealing' and new_state == 'waiting' then
       self.state = 'waiting'
       self:find_stems()
+   elseif self.state == 'waiting' and new_state == 'encountering' then
+      self.state = 'encountering'
+   elseif self.state == 'encountering' and new_state == 'waiting' then
+      self.state = 'waiting'
+      self:find_stems()
    else
       error(string.format('Cannot switch to state %s from %s', new_state, self.state))
    end
@@ -111,16 +116,20 @@ end
 
 function methods:find_stems()
    self.stems:clear(false)
+
+   -- A tile that is hidden, but contains an exit to a visible tile
+   -- (which doesn't coa non-chest encounter) is a stem:
    local seen_and_clear =
       function(_,p)
-         return self.visible:at(p) and not self.encounters:at(p)
+         return (self.visible:at(p) and
+              (not self.encounters:at(p) or self.encounters:at(p) == 'chest'))
       end
 
    for p in self.maze:each() do
       if not self.visible:at(p) then
-         -- Find exits to visible tiles
+         -- Find exits to visible/clear tiles
          local exits = self.maze:connected(p, seen_and_clear)
-         if #exits > 0 then -- this is hidden but connected to a visible, so, stem!
+         if #exits > 0 then -- this is hidden but connected to a visible/clear, so, stem!
             self.stems:at(p, true)
          end
       end
@@ -157,4 +166,14 @@ function methods:next(pt)
    local possible = self.maze:connected(pt, hidden)
    assert(#possible == 1, "Multiple paths from this cell")
    return possible[1]
+end
+
+function methods:encounter(pt)
+   assert(self.encounters:at(pt), "This isn't an encounter")
+   self:change_state('encountering')
+
+   -- Actual encounter later
+   self.encounters:at(pt, false)
+
+   self:change_state('waiting')
 end
