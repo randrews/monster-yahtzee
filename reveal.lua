@@ -9,10 +9,11 @@ local ANIM = 0.25 -- 1/4 sec per animation
 local INTERVAL = 0.1 -- 1/10 sec between starting each tile
 local TILE = TILE or 48 -- Pull the tile size from global, or default to 48
 
-function new(game, tiles)
+function new(game, tiles, map_offset)
    local tbl = {
       game = game,
       tiles = tiles,
+      map_offset = map_offset or point(0,0),
       time = 0,
       finished = false,
       covers = {}
@@ -59,8 +60,8 @@ end
 function methods:makeCovers()
    for _, t in ipairs(self.tiles) do
       table.insert(self.covers, {
-                      x = t.x*TILE,
-                      y = t.y*TILE,
+                      x = t.x*TILE + self.map_offset.x,
+                      y = t.y*TILE + self.map_offset.y,
                       w = TILE, h = TILE,
                       started = false,
                       finished = false,
