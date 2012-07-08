@@ -14,6 +14,10 @@ function new(w, h)
       stems = maze.new(w,h),
       encounters = maze.new(w,h),
 
+      health = 3,
+      max_health = 4,
+      score = 0,
+
       state = 'waiting'
    }
 
