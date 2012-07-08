@@ -22,9 +22,6 @@ end
 function methods:draw()
    local g = love.graphics
 
-   g.setColor(30, 30, 20)
-   g.rectangle('fill', 0, g.getHeight()-64, g.getWidth(), 64)
-
    g.setColor(255,255,255)
    local f = self.font
    g.setFont(f)

@@ -10,6 +10,7 @@ assert(love, "Run this inside Love")
 
 local quads = {}
 local mapSprites = nil
+local background = nil
 local dialogFont = nil
 local map_loc = nil
 local game = nil
@@ -20,6 +21,7 @@ local current_animation = nil
 function love.load()
    math.randomseed(os.time())
    local tiles = love.graphics.newImage('tileset.png')
+   background = love.graphics.newImage('background.png')
 
    local nq = love.graphics.newQuad
    local w, h, sw, sh = TILE, TILE, TILE*5, TILE*5
@@ -69,6 +71,9 @@ function love.load()
 end
 
 function love.draw()
+   love.graphics.setColor(255,255,255)
+   love.graphics.draw(background, 0, 0)
+
    drawMap(game, mapSprites)
    love.graphics.draw(mapSprites)
    status_bar:draw()
