@@ -64,8 +64,8 @@ function love.load()
    game = Game.new(board_w,board_h)
 
    mapSprites = love.graphics.newSpriteBatch(tiles)
-   dialogFont = love.graphics.newFont(24)
-   love.graphics.setFont(love.graphics.newFont(12))
+   dialogFont = love.graphics.newFont('Painted.ttf',24)
+   love.graphics.setFont(love.graphics.newFont('Painted.ttf', 12))
 
    status_bar = status.new(game, quads, tiles)
 end

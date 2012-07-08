@@ -16,7 +16,7 @@ function new(game, quads, image)
 end
 
 function methods:init()
-   self.font = love.graphics.newFont(24)
+   self.font = love.graphics.newFont('Painted.ttf',24)
 end
 
 function methods:draw()
@@ -39,7 +39,7 @@ function methods:draw()
 
    local m = self.message or string.format("Score: %s", self.game.score)
 
-   g.setColor(255,255,255)
+   g.setColor(99,33,0)
    local maxw = TILE*self.game.max_health+20
    g.printf(m, maxw-10, g.getHeight()-44, g.getWidth() - maxw, 'right')
 end

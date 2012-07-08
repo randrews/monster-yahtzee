@@ -12,7 +12,11 @@ function new(game, message, start, font)
       font = font,
       time = 0,
       state = 'opening',
-      finished = false
+      finished = false,
+
+      bg = {196, 190, 91},
+      fg = {154, 98, 0},
+      text = {99,33,0}
    }
 
    setmetatable(tbl, {__index=methods})
@@ -52,10 +56,10 @@ function methods:draw()
       local curr_w = dest_w * pct
       local curr_h = dest_h * pct
 
-      g.setColor(35, 53, 90)
+      g.setColor(self.bg)
       g.rectangle('fill', curr_x, curr_y, curr_w, curr_h)
 
-      g.setColor(90, 123, 191)
+      g.setColor(self.fg)
       g.rectangle('line', curr_x, curr_y, curr_w, curr_h)
    elseif self.state == 'waiting' then
       self:drawFinishedDialog(dest, dest_w, dest_h)
@@ -65,13 +69,13 @@ end
 function methods:drawFinishedDialog(at, w, h)
    local g = love.graphics
 
-   g.setColor(35, 53, 90)
+   g.setColor(self.bg)
    g.rectangle('fill', at.x, at.y, w, h)
 
-   g.setColor(90, 123, 191)
+   g.setColor(self.fg)
    g.rectangle('line', at.x, at.y, w, h)
 
-   g.setColor(255,255,255)
+   g.setColor(self.text)
    if self.font then g.setFont(self.font) end
    local f = g.getFont()
       
