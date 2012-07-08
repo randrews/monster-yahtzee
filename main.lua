@@ -115,7 +115,7 @@ function love.mousepressed(x, y)
    if game.state == 'waiting' and game.stems:at(pt) then
       -- They clicked on a stem, give 'em some corridor:
       local path = game:reveal(pt)
-      current_animation = reveal.new(game, path, map_loc)
+      current_animation = reveal.new(game, path, map_loc, background)
    elseif game.state == 'waiting' and game.encounters:at(pt) then
       -- They clicked on an encounter, give 'em the business:
       local message = game:encounter(pt)

@@ -9,11 +9,12 @@ local ANIM = 0.25 -- 1/4 sec per animation
 local INTERVAL = 0.1 -- 1/10 sec between starting each tile
 local TILE = TILE or 48 -- Pull the tile size from global, or default to 48
 
-function new(game, tiles, map_offset)
+function new(game, tiles, map_offset, background)
    local tbl = {
       game = game,
       tiles = tiles,
       map_offset = map_offset or point(0,0),
+      background = background,
       time = 0,
       finished = false,
       covers = {}
@@ -50,8 +51,13 @@ function methods:draw()
       local a = (ANIM - cover.time) * 255 / ANIM
 
       if not cover.finished and a > 0 then
-         g.setColor(0,0,0, a)
-         g.rectangle('fill', cover.x, cover.y, cover.w, cover.h)
+         if self.background then
+            g.setColor(255,255,255,a)
+            g.drawq(self.background, cover.quad, cover.x, cover.y)
+         else
+            g.setColor(0,0,0, a)
+            g.rectangle('fill', cover.x, cover.y, TILE, TILE)
+         end
       end
    end
    g.pop()
@@ -59,14 +65,22 @@ end
 
 function methods:makeCovers()
    for _, t in ipairs(self.tiles) do
-      table.insert(self.covers, {
-                      x = t.x*TILE + self.map_offset.x,
-                      y = t.y*TILE + self.map_offset.y,
-                      w = TILE, h = TILE,
-                      started = false,
-                      finished = false,
-                      time = 0
-                   })
+      local cover = {
+         x = t.x*TILE + self.map_offset.x,
+         y = t.y*TILE + self.map_offset.y,
+         started = false,
+         finished = false,
+         time = 0
+      }
+
+      if self.background then
+         cover.quad = love.graphics.newQuad(cover.x, cover.y,
+                                            TILE, TILE,
+                                            self.background:getWidth(),
+                                            self.background:getHeight())
+      end
+
+      table.insert(self.covers, cover)
    end
 end
 
