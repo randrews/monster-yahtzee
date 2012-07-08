@@ -124,7 +124,26 @@ function love.mousepressed(x, y)
    end
 end
 
+function point_to_tile(pt)
+   pt = pt - map_loc
+   local t_pt = point(math.floor(pt.x/TILE), math.floor(pt.y/TILE))
+   return game.maze:inside(t_pt) and t_pt
+end
+
 function love.update(dt)
+   local pt = point_to_tile(point(love.mouse.getPosition()))
+   status_bar.message = nil
+   if pt and game.state == 'waiting' then
+      local enc = game.encounters:at(pt)
+      if game.stems:at(pt) then
+         status_bar.message = "Click to explore"
+      elseif game.visible:at(pt) and enc == 'chest' then
+         status_bar.message = "Click to loot chest"
+      elseif game.visible:at(pt) and enc == 'orc' then
+         status_bar.message = "Click to fight monster"
+      end      
+   end
+
    if current_animation then
       current_animation:update(dt)
       if current_animation.finished then
