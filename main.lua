@@ -49,7 +49,7 @@ function love.load()
    quads.button = nq(w*4, 0, w, h, sw, sh)
    quads.chest = nq(0, h*4, w, h, sw, sh)
    quads.orc = nq(w, h*4, w, h, sw, sh)
-   quads.heart = nq(w*4, h, w, h, sw, sh)
+   quads.heart = nq(w*4, h, 40, 40, sw, sh)
 
    -- Board dims in tiles
    local board_w = math.floor(love.graphics.getWidth()/TILE)

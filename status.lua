@@ -33,8 +33,8 @@ function methods:draw()
          g.setColor(255,255,255)
       end
       g.drawq(self.image, self.quads.heart,
-              (n-1)*TILE+10,
-              g.getHeight()-64)
+              (n-1)*40+10,
+              g.getHeight()-40)
    end
 
    local m = self.message or string.format("Score: %s", self.game.score)
