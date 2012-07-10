@@ -124,7 +124,7 @@ function love.mousepressed(x, y)
       if type == 'chest' then
          current_animation = dialog.new(game, event, center, dialogFont)
       else
-         current_animation = dialog.new(game, 'blah', center, dialogFont)
+         current_animation = combat.new(game, event, center, dialogFont)
       end
    elseif game.state == 'encountering' and current_animation.state == 'waiting' then
       current_animation.state = 'closing'

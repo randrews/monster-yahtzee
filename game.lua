@@ -192,9 +192,9 @@ function methods:encounter(pt)
       -- Return a message that we can pop up in a dialog
       return 'chest', c.message
    else
-      -- Actual encounter later
-      self.encounters:at(pt, false)
-      self:change_state('waiting')
-      return 'monster', monster.new(self)
+      -- self.encounters:at(pt, false)
+      assert(self.monsters:at(pt))
+      -- Return a monster that we can bring up a combat with
+      return 'monster', self.monsters:at(pt)
    end
 end
