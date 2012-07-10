@@ -2,6 +2,7 @@ module(..., package.seeall)
 
 local maze = require('maze')
 local chest = require('chest')
+local monster = require('monster')
 
 local methods = {}
 
@@ -14,6 +15,7 @@ function new(w, h)
       visible = maze.new(w,h),
       stems = maze.new(w,h),
       encounters = maze.new(w,h),
+      monsters = maze.new(w,h),
 
       health = 3,
       max_health = 4,
@@ -70,7 +72,8 @@ function methods:create_encounters()
    for pt in enc:each() do
       if enc:at(pt) then
          if math.random(2) == 1 then
-            self.encounters:at(pt, 'orc')
+            self.encounters:at(pt, 'monster')
+            self.monsters:at(pt, monster.new(self))
          else
             self.encounters:at(pt, 'chest')
          end
@@ -156,7 +159,6 @@ function methods:reveal(pt)
    local corridor = {pt}
    self.visible:at(pt, true)
 
-
    -- Return true iff pt should stop a reveal chain
    local function stopper(pt)
       return #(self.maze:at(pt)) ~= 2 or self.encounters:at(pt)
@@ -188,10 +190,11 @@ function methods:encounter(pt)
       local c = chest.new(self)
       c:apply()
       -- Return a message that we can pop up in a dialog
-      return c.message
+      return 'chest', c.message
    else
       -- Actual encounter later
       self.encounters:at(pt, false)
       self:change_state('waiting')
+      return 'monster', monster.new(self)
    end
 end

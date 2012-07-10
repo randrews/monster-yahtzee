@@ -5,6 +5,7 @@ local point = require 'point'
 local reveal = require 'reveal'
 local dialog = require 'dialog'
 local status = require 'status'
+local combat = require 'combat'
 
 assert(love, "Run this inside Love")
 
@@ -48,7 +49,7 @@ function love.load()
 
    quads.button = nq(w*4, 0, w, h, sw, sh)
    quads.chest = nq(0, h*4, w, h, sw, sh)
-   quads.orc = nq(w, h*4, w, h, sw, sh)
+   quads.monster = nq(w, h*4, w, h, sw, sh)
    quads.heart = nq(w*4, h, 40, 40, sw, sh)
 
    -- Board dims in tiles
@@ -118,11 +119,12 @@ function love.mousepressed(x, y)
       current_animation = reveal.new(game, path, map_loc, background)
    elseif game.state == 'waiting' and game.encounters:at(pt) then
       -- They clicked on an encounter, give 'em the business:
-      local message = game:encounter(pt)
-      if message then
-         current_animation = dialog.new(game, message,
-                                        point(pt.x*TILE+TILE/2, pt.y*TILE+TILE/2) + map_loc,
-                                        dialogFont)
+      local center = point(pt.x*TILE+TILE/2, pt.y*TILE+TILE/2) + map_loc
+      local type, event = game:encounter(pt)
+      if type == 'chest' then
+         current_animation = dialog.new(game, event, center, dialogFont)
+      else
+         current_animation = dialog.new(game, 'blah', center, dialogFont)
       end
    elseif game.state == 'encountering' and current_animation.state == 'waiting' then
       current_animation.state = 'closing'
@@ -144,8 +146,10 @@ function love.update(dt)
          status_bar.message = "Click to explore"
       elseif game.visible:at(pt) and enc == 'chest' then
          status_bar.message = "Click to loot chest"
-      elseif game.visible:at(pt) and enc == 'orc' then
-         status_bar.message = "Click to fight monster"
+      elseif game.visible:at(pt) and enc == 'monster' then
+         local mon = game.monsters:at(pt)
+         local name = (mon and mon.name) or "monster"
+         status_bar.message = "Click to fight " .. name
       end      
    end
 
