@@ -89,6 +89,13 @@ function methods:draw(at, w, h)
       self:draw_dice(self.saved)
       g.pop()
 
+      g.push()
+      local loc, size = self:roll_button_rect()
+      g.translate(loc.x, loc.y)
+      g.setColor(self.text)
+      g.rectangle('line', 0, 0, size.x, size.y)
+      g.printf('Roll', 0, size.y/2-12, size.x, 'center')
+      g.pop()
    end
 end
 
@@ -136,6 +143,20 @@ function methods:saved_dice_rect()
 
    local size = point(32*5+8*6, 48)
    return loc, size
+end
+
+-- Returns two points representing the loc and size of the roll button
+function methods:roll_button_rect()
+   local at = point(100, 100)
+   local w, h = 600, 400
+
+   local dl, ds = self:dice_rect()
+   local sl, ss = self:saved_dice_rect()
+
+   local loc = point(dl.x+ds.x+20, dl.y)
+   local dim = (sl.y+ss.y) - dl.y
+
+   return loc, point(dim, dim)
 end
 
 function methods:roll()
