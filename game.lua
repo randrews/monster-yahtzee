@@ -198,3 +198,9 @@ function methods:encounter(pt)
       return 'monster', self.monsters:at(pt)
    end
 end
+
+function methods:change_health(dh)
+   self.health = self.health + dh
+   self.health = math.min(self.health, self.max_health)
+   self.health = math.max(self.health, 0)
+end

@@ -114,9 +114,5 @@ function methods:apply()
 
    g.score = g.score + self.points
    g.armor = g.armor + self.armor
-   g.health = g.health + self.health
-
-   -- Health bounds
-   g.health = math.min(g.health, g.max_health)
-   g.health = math.max(g.health, 0)
+   g:change_health(self.health)
 end
