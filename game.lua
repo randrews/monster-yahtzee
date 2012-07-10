@@ -1,6 +1,7 @@
 module(..., package.seeall)
 
 local maze = require('maze')
+local chest = require('chest')
 
 local methods = {}
 
@@ -17,6 +18,7 @@ function new(w, h)
       health = 3,
       max_health = 4,
       score = 0,
+      armor = 0,
 
       state = 'waiting'
    }
@@ -182,8 +184,11 @@ function methods:encounter(pt)
    self:change_state('encountering')
 
    if self.encounters:at(pt) == 'chest' then
+      self.encounters:at(pt, false)
+      local c = chest.new(self)
+      c:apply()
       -- Return a message that we can pop up in a dialog
-      return "You found a chest!\nIt's full of old nerf balls."
+      return c.message
    else
       -- Actual encounter later
       self.encounters:at(pt, false)
