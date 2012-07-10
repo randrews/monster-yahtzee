@@ -109,9 +109,9 @@ function drawMap(game, sb)
    end
 end
 
-function love.mousepressed(x, y)
-   x = math.floor((x-map_loc.x)/TILE)
-   y = math.floor((y-map_loc.y)/TILE)
+function love.mousepressed(mouse_x, mouse_y)
+   x = math.floor((mouse_x-map_loc.x)/TILE)
+   y = math.floor((mouse_y-map_loc.y)/TILE)
    local pt = point(x, y)
    if game.state == 'waiting' and game.stems:at(pt) then
       -- They clicked on a stem, give 'em some corridor:
@@ -126,8 +126,8 @@ function love.mousepressed(x, y)
       else
          current_animation = combat.new(game, event, center, dialogFont)
       end
-   elseif game.state == 'encountering' and current_animation.state == 'waiting' then
-      current_animation.state = 'closing'
+   elseif game.state == 'encountering' then
+      current_animation:click(mouse_x, mouse_y)
    end
 end
 
