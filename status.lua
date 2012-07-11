@@ -19,6 +19,8 @@ function methods:init()
    self.font = love.graphics.newFont('Painted.ttf',24)
 end
 
+function methods:set_game(game) self.game = game end
+
 function methods:draw()
    local g = love.graphics
 

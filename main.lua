@@ -16,12 +16,13 @@ local dialogFont = nil
 local map_loc = nil
 local game = nil
 local status_bar = nil
+local tiles = nil
 
 local current_animation = nil
 
 function love.load()
    math.randomseed(os.time())
-   local tiles = love.graphics.newImage('tileset.png')
+   tiles = love.graphics.newImage('tileset.png')
    background = love.graphics.newImage('background.png')
 
    local nq = love.graphics.newQuad
@@ -62,13 +63,22 @@ function love.load()
    local map_y = (love.graphics.getHeight() - 64 - board_h*TILE) / 2
    map_loc = point(map_x, map_y)
 
-   game = Game.new(board_w,board_h)
+   game = create_game()
 
    mapSprites = love.graphics.newSpriteBatch(tiles)
    dialogFont = love.graphics.newFont('Painted.ttf',24)
    love.graphics.setFont(love.graphics.newFont('Painted.ttf', 12))
 
    status_bar = status.new(game, quads, tiles)
+end
+
+function create_game()
+   -- Board dims in tiles
+   local board_w = math.floor(love.graphics.getWidth()/TILE)
+   -- Leave 64px at the bottom for the status bar, yo.
+   local board_h = math.floor((love.graphics.getHeight()-64)/TILE)
+
+   return Game.new(board_w,board_h)
 end
 
 function love.draw()
@@ -128,6 +138,10 @@ function love.mousepressed(mouse_x, mouse_y)
       end
    elseif game.state == 'encountering' then
       current_animation:click(mouse_x, mouse_y)
+   elseif game.state == 'dead' then
+      current_animation:click(mouse_x, mouse_y)
+      game = create_game()
+      status_bar:set_game(game)
    end
 end
 
@@ -159,7 +173,7 @@ function love.update(dt)
          current_animation = nil
          if game.health == 0 then
             current_animation = dialog.new(game,
-                                           'You have died.\nSorry! You should play again.',
+                                           'You have died.\nSorry! Click to play again.',
                                            point(400, 300),
                                            dialogFont)
             game:change_state('dead')

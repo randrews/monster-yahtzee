@@ -45,7 +45,7 @@ function methods:description()
    elseif self.goal == methods.straight then goal_name = "a straight" end
 
    if self.defeated then
-      return string.format("You have defaeated the %s with a %s!",
+      return string.format("You have defeated the %s with %s!",
                         self.name, goal_name)
    else      
       return string.format("You are fighting a %s. It needs %s to defeat.",

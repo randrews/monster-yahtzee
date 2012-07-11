@@ -117,7 +117,9 @@ function methods:draw(at, w, h)
 
       g.printf(self.monster:description(), at.x+20, at.y+20, w-40, 'left')
 
-      g.printf(self.recent_round.message,
+      local str = string.format('Round %s: %s', self.monster.round,
+                                self.recent_round.message)
+      g.printf(str,
                at.x+20, at.y + 64,
                w-40, 'center')
 

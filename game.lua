@@ -31,6 +31,8 @@ function new(w, h)
 end
 
 function methods:change_state(new_state)
+   if self.state == new_state then return end
+
    if self.state == 'waiting' and new_state == 'revealing' then
       self.state = 'revealing'
    elseif self.state == 'revealing' and new_state == 'waiting' then
