@@ -34,11 +34,46 @@ function methods:click(x, y)
       if self.game.health == 0 then
          self.message:close()
       else
-         self.monster:next_round()
-         self.recent_round = self.monster:attack()
-         self.game:change_health(self.recent_round.health)
+         local ms = point(x, y)
+         -- First, are we rolling?
+         if self:click_in(ms, self:roll_button_rect()) then
+            self.monster:next_round()
+            self.recent_round = self.monster:attack()
+            self.game:change_health(self.recent_round.health)
+         else
+            -- Then, maybe we clicked on a real die?
+            local d = self:dice_rect()
+
+            for n = 1, #self.dice do
+               local l, s = self:die_rect(n)
+
+               if self:click_in(ms, d+l, s) then
+                  local die = table.remove(self.dice, n)
+                  table.insert(self.saved, die)
+                  break
+               end
+            end
+
+            -- Or a saved die?
+            local sd = self:saved_dice_rect()
+
+            for n = 1, #self.saved do
+               local l, s = self:die_rect(n)
+
+               if self:click_in(ms, sd+l, s) then
+                  local die = table.remove(self.saved, n)
+                  table.insert(self.dice, die)
+                  break
+               end
+            end
+         end
       end
    end
+end
+
+function methods:click_in(pt, loc, size)
+   assert(pt and loc and size)
+   return pt >= loc and pt <= loc+size
 end
 
 function methods:update(dt)
@@ -113,6 +148,7 @@ end
 
 -- Returns the point (offset from the origin of the dice box) for die n,
 -- and a point representing the size
+-- n is in 1..5
 function methods:die_rect(n)
    return point(10 + 39*(n-1), 7), point(32, 32)
 end
