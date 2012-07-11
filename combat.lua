@@ -123,31 +123,38 @@ function methods:draw(at, w, h)
                at.x+20, at.y + 64,
                w-40, 'center')
 
-      g.push()
-      local loc, size = self:dice_rect()
-      g.translate(loc.x, loc.y)
-      g.setColor(self.text)
-      g.rectangle('line', 0, 0, size.x, size.y)
-      g.printf('Dice: click to save', 0, -34, w-40, 'left')
-      self:draw_dice(self.dice)
-      g.pop()
+      if self.game.health > 0 and not self.monster.defeated then
+         g.push()
+         local loc, size = self:dice_rect()
+         g.translate(loc.x, loc.y)
+         g.setColor(self.text)
+         g.rectangle('line', 0, 0, size.x, size.y)
+         g.printf('Dice: click to save', 0, -34, w-40, 'left')
+         self:draw_dice(self.dice)
+         g.pop()
 
-      g.push()
-      local loc, size = self:saved_dice_rect()
-      g.translate(loc.x, loc.y)
-      g.setColor(self.text)
-      g.rectangle('line', 0, 0, size.x, size.y)
-      g.printf('Saved dice:', 0, -34, w-40, 'left')
-      self:draw_dice(self.saved)
-      g.pop()
+         g.push()
+         local loc, size = self:saved_dice_rect()
+         g.translate(loc.x, loc.y)
+         g.setColor(self.text)
+         g.rectangle('line', 0, 0, size.x, size.y)
+         g.printf('Saved dice:', 0, -34, w-40, 'left')
+         self:draw_dice(self.saved)
+         g.pop()
 
-      g.push()
-      local loc, size = self:roll_button_rect()
-      g.translate(loc.x, loc.y)
-      g.setColor(self.text)
-      g.rectangle('line', 0, 0, size.x, size.y)
-      g.printf('Roll', 0, size.y/2-12, size.x, 'center')
-      g.pop()
+         g.push()
+         local loc, size = self:roll_button_rect()
+         g.translate(loc.x, loc.y)
+         g.setColor(self.text)
+         g.rectangle('line', 0, 0, size.x, size.y)
+         g.printf('Roll', 0, size.y/2-12, size.x, 'center')
+         g.pop()
+      else
+         g.setColor(self.text)
+         g.printf('Click to continue',
+                  at.x+20, at.y + h-40,
+                  w-40, 'center')
+      end
    end
 end
 
