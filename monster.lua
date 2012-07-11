@@ -31,19 +31,19 @@ function methods:init()
       self.to_hit = 0.5
    elseif r <= 8 then
       self.name = 'large ghost'
-      self.goal = methods.straight
+      self.goal = methods.full_house
       self.to_hit = 0.5
    else
       self.name = 'huge ghost'
-      self.goal = methods.straight
-      self.to_hit = 0.75
+      self.goal = methods.four_of_a_kind
+      self.to_hit = 0.6
    end
 end
 
 function methods:start_combat()
    if self.boss then
       self.name = 'boss ghost'
-      self.goal = methods.four_of_a_kind
+      self.goal = methods.straight
       self.to_hit = 0.5 + 0.05 * self.game.level
    end
 end
@@ -53,6 +53,7 @@ function methods:description()
    if self.goal == methods.two_pair then goal_name = "two pair"
    elseif self.goal == methods.three_of_a_kind then goal_name = "three of a kind"
    elseif self.goal == methods.four_of_a_kind then goal_name = "four of a kind"
+   elseif self.goal == methods.full_house then goal_name = "a full house"
    elseif self.goal == methods.straight then goal_name = "a straight" end
 
    if self.defeated then
@@ -147,4 +148,15 @@ function methods.four_of_a_kind(dice)
       if n >= 4 then return true end
    end
    return false
+end
+
+function methods.full_house(dice)
+   local f = methods.frequency(dice)
+   local three, two = false, false
+
+   for _, n in pairs(f) do
+      if n >= 3 then three=true
+      elseif n >= 2 then two=true end
+   end
+   return three and two
 end
