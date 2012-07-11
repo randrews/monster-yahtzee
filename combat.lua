@@ -23,23 +23,29 @@ function new(game, monster, start, font)
 end
 
 function methods:init()
+   self:roll()
+   self.monster:try_roll(self:all_dice())
+
    self.recent_round = self.monster:attack()
    self.game:change_health(self.recent_round.health)
-
-   self:roll()
 end
 
 function methods:click(x, y)
    if self.message.state == 'waiting' then
-      if self.game.health == 0 then
+      if self.game.health == 0 or self.monster.defeated then
          self.message:close()
       else
          local ms = point(x, y)
          -- First, are we rolling?
          if self:click_in(ms, self:roll_button_rect()) then
+
+            self:roll()
+            self.monster:try_roll(self:all_dice())
+
             self.monster:next_round()
             self.recent_round = self.monster:attack()
             self.game:change_health(self.recent_round.health)
+
          else
             -- Then, maybe we clicked on a real die?
             local d = self:dice_rect()
@@ -69,6 +75,13 @@ function methods:click(x, y)
          end
       end
    end
+end
+
+function methods:all_dice()
+   local all = {}
+   for _, d in ipairs(self.dice) do table.insert(all, d) end
+   for _, d in ipairs(self.saved) do table.insert(all, d) end
+   return all
 end
 
 function methods:click_in(pt, loc, size)

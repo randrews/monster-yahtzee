@@ -8,6 +8,7 @@ function new(game)
       name = 'ghost',
       goal = nil,
       round = 1,
+      defeated = false,
       surprise = (math.random(2) == 1)
    }
 
@@ -43,13 +44,20 @@ function methods:description()
    elseif self.goal == methods.three_of_a_kind then goal_name = "three of a kind"
    elseif self.goal == methods.straight then goal_name = "a straight" end
 
-   return string.format("You are fighting a %s. It needs %s to defeat.",
+   if self.defeated then
+      return string.format("You have defaeated the %s with a %s!",
                         self.name, goal_name)
+   else      
+      return string.format("You are fighting a %s. It needs %s to defeat.",
+                           self.name, goal_name)
+   end
 end
 
 -- Let the monster attack, return a table with a health delta and a message.
 function methods:attack()
-   if self.round == 1 and self.surprise then
+   if self.defeated then
+      return {health=0, message="You defeat the monster!"}
+   elseif self.round == 1 and self.surprise then
       return {health=0, message="You surprise it!"}
    else
       local to_hit = math.max(0.1, self.to_hit - self.game.armor * 0.1)
@@ -69,16 +77,51 @@ function methods:next_round()
    self.round = self.round + 1
 end
 
+-- Takes an array of dice and sets defeated if it's what kills this dude.
+function methods:try_roll(dice)
+   if self.goal(dice) then self.defeated = true end
+   return self.defeated
+end
+
+-- Returns a frequency chart of an array of dice
+function methods.frequency(dice)
+   local f = {}
+   for _, d in ipairs(dice) do
+      if not f[d] then f[d] = 1
+      else f[d] = f[d] + 1 end
+   end
+
+   return f
+end
+
 -- Take an array of dice (numbers), and return
 -- whether they match the goal or not:
 function methods.two_pair(dice)
-   return false
+   local f = methods.frequency(dice)
+   local c = 0
+
+   for _, n in fpairs(f) do
+      print(_, n)
+      if n >= 2 then c = c + 1 end
+   end
+
+   return c >= 2
 end
 
 function methods.three_of_a_kind(dice)
+   local f = methods.frequency(dice)
+
+   for _, n in pairs(f) do
+      if n >= 3 then return true end
+   end
    return false
 end
 
 function methods.straight(dice)
-   return false
+   local f = methods.frequency(dice)
+
+   for n=2, 5 do
+      if not f[n] or f[n] == 0 then return false end
+   end
+   return f[1] or f[6]
 end
