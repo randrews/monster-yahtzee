@@ -135,7 +135,9 @@ function love.mousepressed(mouse_x, mouse_y)
       if type == 'chest' then
          current_animation = dialog.new(game, event, center, dialogFont)
       elseif type == 'ladder' then
+         local old = game
          game = create_game(game.level + 1)
+         game:copy_player(old)
          status_bar:set_game(game)
       else
          current_animation = combat.new(game, event, center, dialogFont, pt)

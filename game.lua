@@ -31,6 +31,13 @@ function new(w, h, level)
    return tbl
 end
 
+function methods:copy_player(old)
+   self.health = old.health
+   self.armor = old.armor
+   self.score = old.score
+   self.max_health = old.max_health
+end
+
 function methods:change_state(new_state)
    if self.state == new_state then return end
 
