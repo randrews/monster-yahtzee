@@ -22,13 +22,13 @@ function methods:init()
 end
 
 function methods:random_type()
-   -- Types are health (20%), armor (20%), trap (10%), gold (50%)
+   -- Types are health (40%), armor (20%), trap (10%), gold (30%)
    local type
    
    local r = math.random(10)
    if r == 1 then type = 'trap'
-   elseif r <= 3 then type = 'health'
-   elseif r <= 5 then type = 'armor'
+   elseif r <= 5 then type = 'health'
+   elseif r <= 7 then type = 'armor'
    else type = 'gold' end
 
    -- Let's not kill the player to a trap, shall we? It's annoying.
