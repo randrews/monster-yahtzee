@@ -2,6 +2,6 @@ function love.conf(t)
    t.screen.width = 800
    t.screen.height = 600
 
-   t.title = "Monster Yahtzee"
+   t.title = "Maze"
    t.author = "Ross Andrews"
 end
