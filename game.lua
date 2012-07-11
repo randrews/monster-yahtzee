@@ -73,10 +73,13 @@ function methods:create_encounters()
    self.encounters:clear(false)
    local enc = self:place_encounters()
 
+   -- Start with 60% chests on lvl 1, drop 5% after that.
+   local chest_thresh = 0.6 - 0.05 * (self.level-1)
+
    -- Actually make them into chests / monsters
    for pt in enc:each() do
       if enc:at(pt) then
-         if math.random(2) == 1 then
+         if math.random() <= chest_thresh then
             self.encounters:at(pt, 'monster')
             self.monsters:at(pt, monster.new(self))
          else
