@@ -73,13 +73,13 @@ function love.load()
    status_bar = status.new(game, quads, tiles)
 end
 
-function create_game()
+function create_game(level)
    -- Board dims in tiles
    local board_w = math.floor(love.graphics.getWidth()/TILE)
    -- Leave 64px at the bottom for the status bar, yo.
    local board_h = math.floor((love.graphics.getHeight()-64)/TILE)
 
-   return Game.new(board_w,board_h)
+   return Game.new(board_w, board_h, level or 1)
 end
 
 function love.draw()
@@ -134,6 +134,9 @@ function love.mousepressed(mouse_x, mouse_y)
       local type, event = game:encounter(pt)
       if type == 'chest' then
          current_animation = dialog.new(game, event, center, dialogFont)
+      elseif type == 'ladder' then
+         game = create_game(game.level + 1)
+         status_bar:set_game(game)
       else
          current_animation = combat.new(game, event, center, dialogFont, pt)
       end
@@ -165,6 +168,8 @@ function love.update(dt)
          local mon = game.monsters:at(pt)
          local name = (mon and mon.name) or "monster"
          status_bar.message = "Click to fight " .. name
+      elseif game.visible:at(pt) and enc == 'ladder' then
+         status_bar.message = string.format('Go down to level %s', game.level+1)
       end
    end
 
@@ -173,7 +178,8 @@ function love.update(dt)
       if current_animation.finished then
          current_animation = nil
          if game.health == 0 then
-            local msg = string.format('You have died, with a score of %s.\nSorry! Click to play again.', game.score)
+            local msg = string.format('You have died on level %s, with a score of %s.\nSorry! Click to play again.',
+                                      game.level, game.score)
             current_animation = dialog.new(game,
                                            msg,
                                            point(400, 300),

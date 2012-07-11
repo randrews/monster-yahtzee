@@ -39,7 +39,9 @@ function methods:draw()
               g.getHeight()-40)
    end
 
-   local m = self.message or string.format("Score: %s", self.game.score)
+   local m = self.message or string.format("Level %s, score: %s",
+                                           self.game.level,
+                                           self.game.score)
 
    g.setColor(99,33,0)
    local maxw = TILE*self.game.max_health+20

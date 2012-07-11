@@ -6,7 +6,7 @@ local monster = require('monster')
 
 local methods = {}
 
-function new(w, h)
+function new(w, h, level)
    w = w or 10
    h = h or 10
 
@@ -16,6 +16,7 @@ function new(w, h)
       stems = maze.new(w,h),
       encounters = maze.new(w,h),
       monsters = maze.new(w,h),
+      level = level or 1,
 
       health = 3,
       max_health = 4,
@@ -88,6 +89,7 @@ function methods:create_encounters()
    local rooms = self.maze:find(room)
    local exit = table.remove(rooms, math.random(#rooms))
    self.encounters:at(exit, 'ladder')
+   self.monsters:at(exit, false)
 end
 
 function methods:place_encounters()
@@ -199,6 +201,8 @@ function methods:encounter(pt)
       c:apply()
       -- Return a message that we can pop up in a dialog
       return 'chest', c.message
+   elseif self.encounters:at(pt) == 'ladder' then
+      return 'ladder', nil
    else
       assert(self.monsters:at(pt))
       -- Return a monster that we can bring up a combat with

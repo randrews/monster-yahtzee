@@ -123,25 +123,25 @@ function methods:draw(at, w, h)
                at.x+20, at.y + 64,
                w-40, 'center')
 
+      g.push()
+      local loc, size = self:dice_rect()
+      g.translate(loc.x, loc.y)
+      g.setColor(self.text)
+      g.rectangle('line', 0, 0, size.x, size.y)
+      g.printf('Dice: click to save', 0, -34, w-40, 'left')
+      self:draw_dice(self.dice)
+      g.pop()
+
+      g.push()
+      local loc, size = self:saved_dice_rect()
+      g.translate(loc.x, loc.y)
+      g.setColor(self.text)
+      g.rectangle('line', 0, 0, size.x, size.y)
+      g.printf('Saved dice:', 0, -34, w-40, 'left')
+      self:draw_dice(self.saved)
+      g.pop()
+
       if self.game.health > 0 and not self.monster.defeated then
-         g.push()
-         local loc, size = self:dice_rect()
-         g.translate(loc.x, loc.y)
-         g.setColor(self.text)
-         g.rectangle('line', 0, 0, size.x, size.y)
-         g.printf('Dice: click to save', 0, -34, w-40, 'left')
-         self:draw_dice(self.dice)
-         g.pop()
-
-         g.push()
-         local loc, size = self:saved_dice_rect()
-         g.translate(loc.x, loc.y)
-         g.setColor(self.text)
-         g.rectangle('line', 0, 0, size.x, size.y)
-         g.printf('Saved dice:', 0, -34, w-40, 'left')
-         self:draw_dice(self.saved)
-         g.pop()
-
          g.push()
          local loc, size = self:roll_button_rect()
          g.translate(loc.x, loc.y)
@@ -183,7 +183,7 @@ function methods:dice_rect()
    local w, h = 600, 400
 
    local loc = point(at.x+20, at.y+h -- bottom of box
-         - 20 -- margin
+         - 30 -- margin
          - 48 -- height of box
          - (48+34+20)) -- Height of other box
 
@@ -198,7 +198,7 @@ function methods:saved_dice_rect()
    local w, h = 600, 400
 
    local loc = point(at.x+20, at.y+h -- bottom of box
-         - 20 -- margin
+         - 40 -- margin
          - 48) -- height of box
 
    local size = point(32*5+8*6, 48)
