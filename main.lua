@@ -115,6 +115,11 @@ function drawMap(game, sb)
    for pt in game.encounters:each() do
       if game.encounters:at(pt) and game.visible:at(pt) then
          local q = quads[game.encounters:at(pt)] or quads.chest
+
+         -- The ladder is guarded by a boss ghost
+         if game.encounters:at(pt) == 'ladder' and game.monsters:at(pt) then
+            q = quads.monster
+         end
          sb:addq(q, pt.x*TILE + map_loc.x, pt.y*TILE + map_loc.y)
       end
    end
@@ -166,7 +171,7 @@ function love.update(dt)
          status_bar.message = "Click to explore"
       elseif game.visible:at(pt) and enc == 'chest' then
          status_bar.message = "Click to loot chest"
-      elseif game.visible:at(pt) and enc == 'monster' then
+      elseif game.visible:at(pt) and game.monsters:at(pt) then
          local mon = game.monsters:at(pt)
          local name = (mon and mon.name) or "monster"
          status_bar.message = "Click to fight " .. name

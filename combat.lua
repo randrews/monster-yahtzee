@@ -24,6 +24,7 @@ function new(game, monster, start, font, map_cell)
 end
 
 function methods:init()
+   self.monster:start_combat()
    self:roll()
    self.monster:try_roll(self:all_dice())
 

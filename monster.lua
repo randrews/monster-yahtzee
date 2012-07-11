@@ -2,10 +2,11 @@ module(..., package.seeall)
 
 local methods = {}
 
-function new(game)
+function new(game, boss)
    local tbl = {
       game = game,
       name = 'ghost',
+      boss = boss,
       goal = nil,
       round = 1,
       defeated = false,
@@ -19,6 +20,7 @@ end
 
 function methods:init()
    local r = math.random(10)
+
    if r <= 3 then
       self.name = 'tiny ghost'
       self.goal = methods.two_pair
@@ -38,18 +40,31 @@ function methods:init()
    end
 end
 
+function methods:start_combat()
+   if self.boss then
+      self.name = 'boss ghost'
+      self.goal = methods.four_of_a_kind
+      self.to_hit = 0.5 + 0.05 * self.game.level
+   end
+end
+
 function methods:description()
    local goal_name = ""
    if self.goal == methods.two_pair then goal_name = "two pair"
    elseif self.goal == methods.three_of_a_kind then goal_name = "three of a kind"
+   elseif self.goal == methods.four_of_a_kind then goal_name = "four of a kind"
    elseif self.goal == methods.straight then goal_name = "a straight" end
 
    if self.defeated then
       return string.format("You have defeated the %s with %s!",
                         self.name, goal_name)
-   else      
-      return string.format("You are fighting a %s. It needs %s to defeat.",
-                           self.name, goal_name)
+   else
+      if self.boss then
+         return string.format("Surprise! You are fighting the level boss. It needs %s to defeat.", goal_name)
+      else
+         return string.format("You are fighting a %s. It needs %s to defeat.",
+                              self.name, goal_name)
+      end
    end
 end
 
@@ -123,4 +138,13 @@ function methods.straight(dice)
       if not f[n] or f[n] == 0 then return false end
    end
    return f[1] or f[6]
+end
+
+function methods.four_of_a_kind(dice)
+   local f = methods.frequency(dice)
+
+   for _, n in pairs(f) do
+      if n >= 4 then return true end
+   end
+   return false
 end

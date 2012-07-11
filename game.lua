@@ -78,6 +78,7 @@ end
 
 function methods:create_encounters()
    self.encounters:clear(false)
+   self.monsters:clear(false)
    local enc = self:place_encounters()
 
    -- Start with 60% chests on lvl 1, drop 5% after that.
@@ -99,7 +100,7 @@ function methods:create_encounters()
    local rooms = self.maze:find(room)
    local exit = table.remove(rooms, math.random(#rooms))
    self.encounters:at(exit, 'ladder')
-   self.monsters:at(exit, false)
+   self.monsters:at(exit, monster.new(self, true)) -- Put a boss there
 end
 
 function methods:place_encounters()
@@ -211,7 +212,7 @@ function methods:encounter(pt)
       c:apply()
       -- Return a message that we can pop up in a dialog
       return 'chest', c.message
-   elseif self.encounters:at(pt) == 'ladder' then
+   elseif self.encounters:at(pt) == 'ladder' and not self.monsters:at(pt) then
       return 'ladder', nil
    else
       assert(self.monsters:at(pt))
@@ -221,9 +222,11 @@ function methods:encounter(pt)
 end
 
 function methods:remove_monster(pt)
-      assert(self.monsters:at(pt))
+   assert(self.monsters:at(pt))
+   if self.encounters:at(pt) == 'monster' then -- Only remove normal guys, not ladders
       self.encounters:at(pt, false)
-      self.monsters:at(pt, nil)
+   end
+   self.monsters:at(pt, false)
 end
 
 function methods:change_health(dh)
