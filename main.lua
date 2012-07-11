@@ -172,8 +172,9 @@ function love.update(dt)
       if current_animation.finished then
          current_animation = nil
          if game.health == 0 then
+            local msg = string.format('You have died, with a score of %s.\nSorry! Click to play again.', game.score)
             current_animation = dialog.new(game,
-                                           'You have died.\nSorry! Click to play again.',
+                                           msg,
                                            point(400, 300),
                                            dialogFont)
             game:change_state('dead')
