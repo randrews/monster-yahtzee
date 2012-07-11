@@ -4,10 +4,11 @@ local message = require('message')
 
 local methods = {}
 
-function new(game, monster, start, font)
+function new(game, monster, start, font, map_cell)
    local tbl = {
       game = game,
       monster = monster,
+      map_cell = map_cell,
       message = message.new(start, colors),
       font = font,
       finished = false,
@@ -33,6 +34,7 @@ end
 function methods:click(x, y)
    if self.message.state == 'waiting' then
       if self.game.health == 0 or self.monster.defeated then
+         if self.monster.defeated then self.game:remove_monster(self.map_cell) end
          self.message:close()
       else
          local ms = point(x, y)

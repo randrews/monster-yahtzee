@@ -100,8 +100,7 @@ function methods.two_pair(dice)
    local f = methods.frequency(dice)
    local c = 0
 
-   for _, n in fpairs(f) do
-      print(_, n)
+   for _, n in pairs(f) do
       if n >= 2 then c = c + 1 end
    end
 

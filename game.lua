@@ -41,6 +41,8 @@ function methods:change_state(new_state)
    elseif self.state == 'encountering' and new_state == 'waiting' then
       self.state = 'waiting'
       self:find_stems()
+   elseif self.state == 'encountering' and new_state == 'dead' then
+      self.state = 'dead'
    else
       error(string.format('Cannot switch to state %s from %s', new_state, self.state))
    end
@@ -192,11 +194,16 @@ function methods:encounter(pt)
       -- Return a message that we can pop up in a dialog
       return 'chest', c.message
    else
-      -- self.encounters:at(pt, false)
       assert(self.monsters:at(pt))
       -- Return a monster that we can bring up a combat with
       return 'monster', self.monsters:at(pt)
    end
+end
+
+function methods:remove_monster(pt)
+      assert(self.monsters:at(pt))
+      self.encounters:at(pt, false)
+      self.monsters:at(pt, nil)
 end
 
 function methods:change_health(dh)

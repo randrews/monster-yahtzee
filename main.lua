@@ -124,7 +124,7 @@ function love.mousepressed(mouse_x, mouse_y)
       if type == 'chest' then
          current_animation = dialog.new(game, event, center, dialogFont)
       else
-         current_animation = combat.new(game, event, center, dialogFont)
+         current_animation = combat.new(game, event, center, dialogFont, pt)
       end
    elseif game.state == 'encountering' then
       current_animation:click(mouse_x, mouse_y)
@@ -150,14 +150,22 @@ function love.update(dt)
          local mon = game.monsters:at(pt)
          local name = (mon and mon.name) or "monster"
          status_bar.message = "Click to fight " .. name
-      end      
+      end
    end
 
    if current_animation then
       current_animation:update(dt)
       if current_animation.finished then
          current_animation = nil
-         game:change_state('waiting')
+         if game.health == 0 then
+            current_animation = dialog.new(game,
+                                           'You have died.\nSorry! You should play again.',
+                                           point(400, 300),
+                                           dialogFont)
+            game:change_state('dead')
+         else
+            game:change_state('waiting')
+         end
       end
    end
 end
