@@ -81,9 +81,13 @@ function methods:create_encounters()
          else
             self.encounters:at(pt, 'chest')
          end
-
       end
    end
+
+   local room = function(m, p) return #(m:at(p)) == 1 end
+   local rooms = self.maze:find(room)
+   local exit = table.remove(rooms, math.random(#rooms))
+   self.encounters:at(exit, 'ladder')
 end
 
 function methods:place_encounters()
