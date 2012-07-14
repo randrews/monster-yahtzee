@@ -18,8 +18,8 @@ function new(w, h, level)
       monsters = maze.new(w,h),
       level = level or 1,
 
-      health = 3,
-      max_health = 4,
+      health = 10,
+      max_health = 10,
       score = 0,
       armor = 0,
 

@@ -45,5 +45,5 @@ function methods:draw()
 
    g.setColor(99,33,0)
    local maxw = TILE*self.game.max_health+20
-   g.printf(m, maxw-10, g.getHeight()-44, g.getWidth() - maxw, 'right')
+   g.printf(m, 0, g.getHeight()-44, g.getWidth() - 10, 'right')
 end
