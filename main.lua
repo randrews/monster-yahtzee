@@ -133,7 +133,8 @@ function love.mousepressed(mouse_x, mouse_y)
       -- They clicked on a stem, give 'em some corridor:
       local path = game:reveal(pt)
       current_animation = reveal.new(game, path, map_loc, background)
-   elseif game.state == 'waiting' and game.encounters:at(pt) then
+
+   elseif game.state == 'waiting' and game.encounters:at(pt) and game.visible:at(pt) then
       -- They clicked on an encounter, give 'em the business:
       local center = point(pt.x*TILE+TILE/2, pt.y*TILE+TILE/2) + map_loc
       local type, event = game:encounter(pt)
